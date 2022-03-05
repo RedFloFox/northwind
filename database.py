@@ -1,9 +1,9 @@
 import sqlite3
 
-def query(query_text):
+def query(query_text, *param):
     conn = sqlite3.connect('Northwind_large.sqlite')
     cur = conn.cursor()
-    cur.execute(query_text)
+    cur.execute(query_text, param)
 
     column_names = []
     for column in cur.description:
@@ -19,5 +19,14 @@ def query(query_text):
     conn.close()
     return dicts
 
-def get_supplier_facts():
-    return query("""SELECT CompanyName, City, Country FROM supplier""")
+
+def get_all_suppliers():
+    return query("""SELECT * FROM supplier""")
+
+def get_supplier_products(supplier_id):
+    return query("""
+                    SELECT * FROM Product
+                    WHERE SupplierId = ?""", supplier_id)
+
+def get_supplier_name(supplier_id):
+    return query("""SELECT CompanyName FROM Supplier WHERE Id = ?""", supplier_id)
